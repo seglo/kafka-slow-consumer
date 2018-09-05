@@ -19,8 +19,8 @@ import scala.concurrent.duration._
 import scala.concurrent.Future
 
 object SlowConsumer extends App {
-  if (args.isEmpty) throw new Exception("No configuration file supplied")
-  val conf = ConfigFactory.load(args(0))
+  val configFile = args.headOption.getOrElse("application.conf")
+  val conf = ConfigFactory.load(configFile)
 
   val kafkaHost = conf.getString("kafkaHost")
   val topic = conf.getString("topic")
