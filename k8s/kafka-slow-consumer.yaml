@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-slow-consumer
+  labels:
+    app: kafka-slow-consumer
+spec:
+  selector:
+    matchLabels:
+      app: kafka-slow-consumer
+  template:
+    metadata:
+      labels:
+        app: kafka-slow-consumer
+    spec:
+      containers:
+      - name: kafka-slow-consumer
+        image: seglo/kafka-slow-consumer:0.1.0-SNAPSHOT
+        imagePullPolicy: Always
+        env:
+          - name: SLOW_CONSUMER_KAFKA_HOST
+            value: "my-cluster-kafka-bootstrap:9092"
+          - name: SLOW_CONSUMER_TOPIC
+            value: "replicated-topic"
+          - name: SLOW_CONSUMER_CONSUMERGROUP
+            value: "replicated-topic-slow-consumer-cg"
+          - name: SLOW_CONSUMER_CLIENTID
+            value: "replicated-topic-slow-consumer-cid"
+          - name: SLOW_CONSUMER_MPS
+            value: "10000"
+          - name: SLOW_CONSUMER_COMMIT_SIZE
+            value: "10"
