@@ -27,3 +27,17 @@ $ sudo docker run -it confluentinc/cp-kafka kafka-producer-perf-test \
 501 records sent, 100.2 records/sec (0.01 MB/sec), 1.3 ms avg latency, 28.0 max latency.
 ...
 ```
+
+## Exporting metrics
+
+Add the following JVM flags to expose the JVM metrics.
+
+```
+-Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+```
+
+To expose a prometheus endpoint using the Prometheus JMX exporter, add it as a java agent using these JVM flags.
+
+```
+-javaagent:./lib/jmx_prometheus_javaagent-0.3.1.jar=8080:./lib/jmx-prometheus-exporter-config.yaml
+```  
