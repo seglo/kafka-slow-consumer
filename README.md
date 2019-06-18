@@ -1,23 +1,23 @@
 # kafka-slow-consumer
 
-A simple project used to simulate a slow consumer by using [reactive-kafka](https://doc.akka.io/docs/akka-stream-kafka/current/home.html) 
-to consume and [akka streams](https://doc.akka.io/docs/akka/current/stream/stages-overview.html?language=scala#throttle) to throttle
+A simple project used to simulate a slow consumer by using [Alpakka Kafka](https://doc.akka.io/docs/akka-stream-kafka/current/home.html) 
+to consume and [Akka Streams](https://doc.akka.io/docs/akka/current/stream/stages-overview.html?language=scala#throttle) to throttle
 consumed traffic.  This project was created to help demonstrate monitoring consumer lag. 
 
 ## Creating a producer
 
-Use `kafka-producer-perf-test` from Confluent Kafka docker to produce data.
+Use `kafka-producer-perf-test` from to produce data.
 
 i.e.)
 
 ```
 # produce 100 msg/s off messages 100 bytes in size.  
-$ sudo docker run -it confluentinc/cp-kafka kafka-producer-perf-test \
---topic slow-consumer-topic \
+$ sudo docker run -it strimzi/kafka producer --command -- /opt/kafka/bin/kafka-producer-perf-test.sh \
+--topic simple-topic \
 --num-records 1000000 \
 --record-size 100 \
---throughput 100 \
---producer-props bootstrap.servers=broker.kafka.l4lb.thisdcos.directory:9092
+--throughput 1000 \
+--producer-props bootstrap.servers=pipelines-strimzi-kafka-bootstrap.lightbend.svc.cluster.local:9092
 
 501 records sent, 100.2 records/sec (0.01 MB/sec), 4.1 ms avg latency, 284.0 max latency.
 502 records sent, 100.3 records/sec (0.01 MB/sec), 1.5 ms avg latency, 7.0 max latency.
@@ -40,4 +40,55 @@ To expose a prometheus endpoint using the Prometheus JMX exporter, add it as a j
 
 ```
 -javaagent:./lib/jmx_prometheus_javaagent-0.3.1.jar=8080:./lib/jmx-prometheus-exporter-config.yaml
-```  
+```
+
+## Build Docker Image
+
+Login to docker
+
+```
+docker login -u seglo
+```
+
+Push image
+
+```
+sbt docker:publish
+```
+
+
+## Run on K8s
+
+```
+# (Optional) Upgrade existing Strimzi install to watch a namespace
+helm upgrade \
+--reuse-values \
+--set watchNamespaces="{seglo}" \
+pipelines-strimzi lightbend-helm-charts/strimzi-kafka-operator
+
+# (Optional) Create a Kafka CR
+kubectl apply -f simple-strimzi.yaml -n seglo
+
+# Create a topic CR
+kubectl apply -f simple-topic.yaml
+
+# Run a producer perf test to start populating the topic
+kubectl apply -f producer.yaml -n seglo
+
+# Deploy kafka slow consumer
+kubectl apply -f kafka-slow-consumer.yaml -n seglo
+```
+
+Port-forward to Prometheus Endpoint to see if it's reporting metrics
+
+```
+kubectl port-forward kafka-slow-consumer-7d58ff95f-tsxf6 8080:8080 -n seglo
+```
+
+Cleanup
+
+```
+kubectl delete deployment producer -n seglo
+kubectl delete deployment kafka-slow-consumer -n seglo
+kubectl delete kafkatopic simple-topic -n lightbend
+```
