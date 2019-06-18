@@ -10,6 +10,9 @@ spec:
       app: kafka-slow-consumer
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
       labels:
         app: kafka-slow-consumer
     spec:
@@ -19,14 +22,14 @@ spec:
         imagePullPolicy: Always
         env:
           - name: SLOW_CONSUMER_KAFKA_HOST
-            value: "my-cluster-kafka-bootstrap:9092"
+            value: "pipelines-strimzi-kafka-bootstrap.lightbend.svc.cluster.local:9092"
           - name: SLOW_CONSUMER_TOPIC
-            value: "replicated-topic"
+            value: "simple-topic"
           - name: SLOW_CONSUMER_CONSUMERGROUP
-            value: "replicated-topic-slow-consumer-cg"
+            value: "simple-topic-slow-consumer-cg"
           - name: SLOW_CONSUMER_CLIENTID
-            value: "replicated-topic-slow-consumer-cid"
+            value: "simple-topic-slow-consumer-cid"
           - name: SLOW_CONSUMER_MPS
-            value: "10000"
+            value: "1000"
           - name: SLOW_CONSUMER_COMMIT_SIZE
             value: "10"

@@ -81,7 +81,7 @@ object SlowConsumer extends App {
           val o = e.getValue
           s"Partition: $p, Offset: $o"
         }
-        println(s"Consumed $messageCount records.  ${offsets.sorted.mkString(", ")}")
+        //println(s"Consumed $messageCount records.  ${offsets.sorted.mkString(", ")}")
         batch
       }
       .map(_.commitScaladsl())
