@@ -16,7 +16,7 @@ lazy val root = (project in file("."))
       "com.typesafe.akka" %% "akka-slf4j" % "2.5.23",
       "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.slf4j" % "log4j-over-slf4j" % "1.7.26",
-      "com.typesafe.akka" %% "akka-stream-kafka" % "1.0.4",
+      "com.typesafe.akka" %% "akka-stream-kafka" % "1.0.4+5-fcff1ccc+20190626-1606",
       scalaTest % Test
     ),
     javaAgents += JavaAgent("io.prometheus.jmx" % "jmx_prometheus_javaagent" % "0.11.0", arguments = "8080:/opt/docker/conf/jmx-prometheus-exporter-config.yaml"),

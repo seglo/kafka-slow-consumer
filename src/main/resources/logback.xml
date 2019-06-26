@@ -40,9 +40,9 @@
     <logger name="org.testcontainers" level="WARN"/>
     <logger name="com.github.dockerjava" level="WARN"/>
 
-    <logger name="org.apache.kafka.clients.consumer.KafkaConsumer" level="DEBUG"/>
-    <logger name="org.apache.kafka.clients.consumer.internals.Fetcher" level="TRACE"/>
-    <logger name="org.apache.kafka.clients.consumer.internals.SubscriptionState" level="DEBUG"/>
+    <!--<logger name="org.apache.kafka.clients.consumer.KafkaConsumer" level="DEBUG"/>-->
+    <!--<logger name="org.apache.kafka.clients.consumer.internals.Fetcher" level="TRACE"/>-->
+    <!--<logger name="org.apache.kafka.clients.consumer.internals.SubscriptionState" level="DEBUG"/>-->
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />

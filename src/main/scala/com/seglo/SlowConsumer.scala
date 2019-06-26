@@ -65,11 +65,11 @@ object SlowConsumer extends App {
     Consumer.committableSource(consumerSettings, subscription)
       .via(messagesPerSecondThrottle)
       .map { (msg: KCommittableMessage) =>
-        //println(s"value: ${msg.value()}")
+        println(s"value: ${msg.record.value()}")
         messageCount += 1
         msg
       }
-      .groupedWithin(commitGroupSize, 1.seconds)
+      .groupedWithin(commitGroupSize, 10.seconds)
       .map { group =>
         group.foldLeft(CommittableOffsetBatch.empty: CommittableOffsetBatch) { (batch, elem) => batch.updated(elem.committableOffset) }
       }
